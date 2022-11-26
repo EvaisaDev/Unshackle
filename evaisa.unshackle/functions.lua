@@ -1,4 +1,4 @@
-local smallfolk = dofile("mods/evaisa.difficulty/lib/smallfolk.lua")
+local smallfolk = dofile("mods/evaisa.unshackle/lib/smallfolk.lua")
 
 local custom_api = {}
 

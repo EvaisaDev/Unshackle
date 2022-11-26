@@ -12,6 +12,7 @@ function OnMagicNumbersAndWorldSeedInitialized()
     ModLuaFileAppend("mods/evaisa.unshackle/functions.lua", "mods/evaisa.unshackle/example.lua")
 end
 
+
 function OnWorldPreUpdate() 
     dofile("mods/evaisa.unshackle/functions.lua")
     Update()
