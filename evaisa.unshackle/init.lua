@@ -1,3 +1,5 @@
+lfs = dofile("mods/evaisa.unshackle/lib/lfs.lua")
+
 for i = 0, ModSettingGetCount()-1 do
     local setting = ModSettingGetAtIndex( i )
     -- if setting starts with unshackle. then remove it
