@@ -1,5 +1,28 @@
 lfs = dofile("mods/evaisa.unshackle/lib/lfs.lua")
 
+function isFile(name)
+    if type(name)~="string" then return false end
+    if not isDir(name) then
+        return os.rename(name,name) and true or false
+        -- note that the short evaluation is to
+        -- return false instead of a possible nil
+    end
+    return false
+end
+
+function isFileOrDir(name)
+    if type(name)~="string" then return false end
+    return os.rename(name, name) and true or false
+end
+
+function isDir(name)
+    if type(name)~="string" then return false end
+    local cd = lfs.currentdir()
+    local is = lfs.chdir(name) and true or false
+    lfs.chdir(cd)
+    return is
+end
+
 for i = 0, ModSettingGetCount()-1 do
     local setting = ModSettingGetAtIndex( i )
     -- if setting starts with unshackle. then remove it
