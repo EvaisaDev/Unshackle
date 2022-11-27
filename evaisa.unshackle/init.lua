@@ -18,6 +18,11 @@ function OnWorldPreUpdate()
     Update()
 end
 
+function OnPausePreUpdate()
+    dofile("mods/evaisa.unshackle/functions.lua")
+    Update()
+end
+
 function OnPlayerSpawned()
     --local api = dofile("mods/evaisa.unshackle/functions.lua")
     --api.Save("test.txt", "Hello world!")
