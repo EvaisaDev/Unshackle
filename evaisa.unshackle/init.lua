@@ -1,5 +1,7 @@
 lfs = dofile("mods/evaisa.unshackle/lib/lfs.lua")
 
+dofile("data/scripts/lib/coroutines.lua")
+
 function isFile(name)
     if type(name)~="string" then return false end
     if not isDir(name) then
@@ -40,6 +42,7 @@ end
 
 function OnWorldPreUpdate() 
     dofile("mods/evaisa.unshackle/functions.lua")
+    wake_up_waiting_threads(1)
     Update()
 end
 
