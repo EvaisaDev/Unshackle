@@ -22,6 +22,8 @@ end
 
 table.insert(package.loaders, 2, load)
 
+dofile("mods/evaisa.mp/lib/ffi_extensions.lua")
+
 function isFile(name)
     if type(name)~="string" then return false end
     if not isDir(name) then
