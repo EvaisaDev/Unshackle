@@ -22,8 +22,6 @@ end
 
 table.insert(package.loaders, 2, load)
 
-
-
 function isFile(name)
     if type(name)~="string" then return false end
     if not isDir(name) then
@@ -47,59 +45,58 @@ function isDir(name)
     return is
 end
 
-for i = 0, ModSettingGetCount()-1 do
-    local setting = ModSettingGetAtIndex( i )
-    -- if setting starts with unshackle. then remove it
-    if(setting ~= nil)then
-        if string.sub(setting, 1, 10) == "unshackle." then
-            ModSettingRemove(setting)
-        end
+local collected_mod_init_data = {}
+
+local noita_callbacks = {
+    "OnModPreInit",
+    "OnModInit",
+    "OnModPostInit",
+    "OnPlayerSpawned",
+    "OnPlayerDied",
+    "OnWorldInitialized",
+    "OnWorldPreUpdate",
+    "OnWorldPostUpdate",
+    "OnBiomeConfigLoaded",
+    "OnMagicNumbersAndWorldSeedInitialized",
+    "OnPausedChanged",
+    "OnModSettingsChanged",
+    "OnPausePreUpdate",
+}
+
+local remove_callbacks_from_global = function()
+    for _, callback in ipairs(noita_callbacks)do
+        _G[callback] = nil
     end
 end
 
-function OnMagicNumbersAndWorldSeedInitialized()
-    __loaded["mods/evaisa.unshackle/hooks.lua"] = nil
-    local hooks = dofile("mods/evaisa.unshackle/hooks.lua")
-    hooks.OnMagicNumbersAndWorldSeedInitialized()
-    ModLuaFileAppend("mods/evaisa.unshackle/functions.lua", "mods/evaisa.unshackle/example.lua")
+local active_mods = ModGetActiveModIDs()
+
+for i, mod_id in ipairs(active_mods)do
+    if(isFile("mods/"..mod_id.."/unshackle.lua"))then
+        dofile("mods/"..mod_id.."/unshackle.lua")
+        for _, callback in ipairs(noita_callbacks)do
+            if _G[callback] then
+                if not collected_mod_init_data[mod_id] then
+                    collected_mod_init_data[mod_id] = {}
+                end
+                collected_mod_init_data[mod_id][callback] = _G[callback]
+            end
+        end
+
+        remove_callbacks_from_global()
+    end
 end
 
-function OnWorldInitialized()
-    __loaded["mods/evaisa.unshackle/hooks.lua"] = nil
-    local hooks = dofile("mods/evaisa.unshackle/hooks.lua")
-    hooks.OnWorldInitialized()
-end
-
-function OnWorldPreUpdate() 
-    __loaded["mods/evaisa.unshackle/hooks.lua"] = nil
-    local hooks = dofile("mods/evaisa.unshackle/hooks.lua")
-    hooks.OnWorldPreUpdate()
-    dofile("mods/evaisa.unshackle/functions.lua")
-    wake_up_waiting_threads(1)
-    Update()
-end
-
-function OnWorldPostUpdate()
-    __loaded["mods/evaisa.unshackle/hooks.lua"] = nil
-    local hooks = dofile("mods/evaisa.unshackle/hooks.lua")
-    hooks.OnWorldPostUpdate()
-end
-
-function OnPausePreUpdate()
-    dofile("mods/evaisa.unshackle/functions.lua")
-    Update()
-end
-
-function OnPlayerSpawned()
-    __loaded["mods/evaisa.unshackle/hooks.lua"] = nil
-    local hooks = dofile("mods/evaisa.unshackle/hooks.lua")
-    hooks.OnPlayerSpawned()
-    --local api = dofile("mods/evaisa.unshackle/functions.lua")
-    --api.Save("test.txt", "Hello world!")
-end
-
-function OnPlayerDeath()
-    __loaded["mods/evaisa.unshackle/hooks.lua"] = nil
-    local hooks = dofile("mods/evaisa.unshackle/hooks.lua")
-    hooks.OnPlayerDeath()
+for i, callback in ipairs(noita_callbacks)do
+    _G[callback] = function(...)
+        if(callback == "OnWorldInitialized")then
+            GameAddFlagRun( "unshackle2_loaded" )
+            print("Unshackle2 loaded")
+        end
+        for mod_id, mod_callbacks in pairs(collected_mod_init_data)do
+            if mod_callbacks[callback] then
+                mod_callbacks[callback](...)
+            end
+        end
+    end
 end

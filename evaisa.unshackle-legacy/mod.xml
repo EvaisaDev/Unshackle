@@ -1,0 +1,8 @@
+
+<Mod
+	name="Unshackle"
+	description="Lets you register restriction free API functions."
+	request_no_api_restrictions="1"	
+>
+</Mod>
+	
