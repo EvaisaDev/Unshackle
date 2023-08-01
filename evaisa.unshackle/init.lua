@@ -20,31 +20,17 @@ local function load(modulename)
     return errmsg
 end
 
+
+
 table.insert(package.loaders, 2, load)
 
-dofile("mods/evaisa.mp/lib/ffi_extensions.lua")
+dofile("mods/evaisa.unshackle/lib/ffi_extensions.lua")
 
-function isFile(name)
-    if type(name)~="string" then return false end
-    if not isDir(name) then
-        return os.rename(name,name) and true or false
-        -- note that the short evaluation is to
-        -- return false instead of a possible nil
-    end
-    return false
-end
-
-function isFileOrDir(name)
-    if type(name)~="string" then return false end
-    return os.rename(name, name) and true or false
-end
-
-function isDir(name)
-    if type(name)~="string" then return false end
-    local cd = lfs.currentdir()
-    local is = lfs.chdir(name) and true or false
-    lfs.chdir(cd)
-    return is
+function doesScriptExist(path)
+    --local file = ModTextFileGetContent(path)
+    -- pcall to hide the error
+    local file, err = pcall(ModTextFileGetContent, path)
+    return file ~= "" and file ~= nil
 end
 
 local collected_mod_init_data = {}
@@ -74,8 +60,9 @@ end
 local active_mods = ModGetActiveModIDs()
 
 for i, mod_id in ipairs(active_mods)do
-    if(isFile("mods/"..mod_id.."/unshackle.lua"))then
+    if(doesScriptExist("mods/"..mod_id.."/unshackle.lua"))then
         dofile("mods/"..mod_id.."/unshackle.lua")
+        print("Unshackle Mod Loaded: "..mod_id)
         for _, callback in ipairs(noita_callbacks)do
             if _G[callback] then
                 if not collected_mod_init_data[mod_id] then
