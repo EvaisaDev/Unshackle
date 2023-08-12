@@ -1,6 +1,7 @@
 package.path = package.path .. ";./mods/evaisa.unshackle/lib/?.lua"
 package.path = package.path .. ";./mods/evaisa.unshackle/lib/?/init.lua"
 package.cpath = package.cpath .. ";./mods/evaisa.unshackle/bin/?.dll"
+package.cpath = package.cpath .. ";./mods/evaisa.unshackle/bin/?.exe"
 
 lfs = dofile("mods/evaisa.unshackle/lib/lfs.lua")
 
