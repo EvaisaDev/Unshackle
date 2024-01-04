@@ -82,6 +82,8 @@ for i, callback in ipairs(noita_callbacks)do
         if(callback == "OnWorldInitialized")then
             GameAddFlagRun( "unshackle2_loaded" )
             print("Unshackle2 loaded")
+        elseif(callback == "OnWorldPreUpdate")then
+            wake_up_waiting_threads(1)
         end
         for mod_id, mod_callbacks in pairs(collected_mod_init_data)do
             if mod_callbacks[callback] then
@@ -90,3 +92,4 @@ for i, callback in ipairs(noita_callbacks)do
         end
     end
 end
+
