@@ -3,7 +3,7 @@ package.path = package.path .. ";./mods/evaisa.unshackle/lib/?/init.lua"
 package.cpath = package.cpath .. ";./mods/evaisa.unshackle/bin/?.dll"
 package.cpath = package.cpath .. ";./mods/evaisa.unshackle/bin/?.exe"
 
-lfs = dofile("mods/evaisa.unshackle/lib/lfs.lua")
+lfs = require("lfs")
 
 dofile("data/scripts/lib/coroutines.lua")
 
