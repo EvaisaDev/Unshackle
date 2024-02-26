@@ -3,6 +3,8 @@ package.path = package.path .. ";./mods/evaisa.unshackle/lib/?/init.lua"
 package.cpath = package.cpath .. ";./mods/evaisa.unshackle/bin/?.dll"
 package.cpath = package.cpath .. ";./mods/evaisa.unshackle/bin/?.exe"
 
+VERSION_UNSHACKLE = "2.4.0"
+
 lfs = require("lfs")
 
 dofile("data/scripts/lib/coroutines.lua")
@@ -30,6 +32,9 @@ dofile("mods/evaisa.unshackle/lib/ffi_extensions.lua")
 function doesScriptExist(path)
     --local file = ModTextFileGetContent(path)
     -- pcall to hide the error
+    if(ModDoesFileExist)then
+        return ModDoesFileExist(path)
+    end
     local file, err = pcall(ModTextFileGetContent, path)
     return file ~= "" and file ~= nil
 end
@@ -81,7 +86,7 @@ for i, callback in ipairs(noita_callbacks)do
     _G[callback] = function(...)
         if(callback == "OnWorldInitialized")then
             GameAddFlagRun( "unshackle2_loaded" )
-            print("Unshackle2 loaded")
+            print("Unshackle Version: "..VERSION_UNSHACKLE.." Loaded!")
         elseif(callback == "OnWorldPreUpdate")then
             wake_up_waiting_threads(1)
         end
