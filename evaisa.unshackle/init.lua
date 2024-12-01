@@ -3,11 +3,17 @@ package.path = package.path .. ";./mods/evaisa.unshackle/lib/?/init.lua"
 package.cpath = package.cpath .. ";./mods/evaisa.unshackle/bin/?.dll"
 package.cpath = package.cpath .. ";./mods/evaisa.unshackle/bin/?.exe"
 
-VERSION_UNSHACKLE = "2.4.0"
+VERSION_UNSHACKLE = "2.6.0"
+
+require 'lua-utf8'
 
 lfs = require("lfs")
+bitser = require("bitser")
+input = dofile("mods/evaisa.unshackle/lib/input.lua")
 
 dofile("data/scripts/lib/coroutines.lua")
+
+try = dofile("mods/evaisa.unshackle/lib/try_catch.lua")
 
 local function load(modulename)
     local errmsg = ""
@@ -23,7 +29,38 @@ local function load(modulename)
     return errmsg
 end
 
+steam = nil
 
+function GetModFilePath(mod_id, steam_id)
+	local file_path = nil
+
+	if(steam == nil or not steam_id or steam_id == "" or steam_id == "0")then
+		file_path = "mods/" .. mod_id
+	else
+		local subscribed_items = steam.UGC.getSubscribedItems()
+		local item_infos = {}
+
+		for _, v in ipairs(subscribed_items) do
+			if(tonumber(tostring(v)) ~= nil)then
+				--print("Checking item: " .. tostring(v))
+				local success, size, folder, timestamp = steam.UGC.getItemInstallInfo(v)
+				if (success) then
+					item_infos[tostring(v)] = {size = size, folder = folder, timestamp = timestamp}
+				end
+			end
+		end
+
+		if(item_infos[steam_id])then
+			file_path = item_infos[steam_id].folder
+		end
+	end
+
+	return file_path
+end
+
+try(function()
+	steam = require("luasteam")
+end)
 
 table.insert(package.loaders, 2, load)
 
@@ -89,6 +126,10 @@ for i, callback in ipairs(noita_callbacks)do
             print("Unshackle Version: "..VERSION_UNSHACKLE.." Loaded!")
         elseif(callback == "OnWorldPreUpdate")then
             wake_up_waiting_threads(1)
+		elseif(callback == "OnMagicNumbersAndWorldSeedInitialized")then
+			if(steam)then
+				steam.init()
+			end
         end
         for mod_id, mod_callbacks in pairs(collected_mod_init_data)do
             if mod_callbacks[callback] then
