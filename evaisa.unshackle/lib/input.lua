@@ -170,7 +170,6 @@ SDL_PollEvent_hook = minhook.create_hook(SDL.SDL_PollEvent, function(event)
             local button_id = tonumber(event.cbutton.button) + 2
             local button = controller_map[button_id]
 
-            mp_log:print(tostring(button))
             if not input.controller.held[button] then
                 input.controller.pressed[button] = GameGetFrameNum()
             end

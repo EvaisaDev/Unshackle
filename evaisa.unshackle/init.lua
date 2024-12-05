@@ -3,13 +3,13 @@ package.path = package.path .. ";./mods/evaisa.unshackle/lib/?/init.lua"
 package.cpath = package.cpath .. ";./mods/evaisa.unshackle/bin/?.dll"
 package.cpath = package.cpath .. ";./mods/evaisa.unshackle/bin/?.exe"
 
-VERSION_UNSHACKLE = "2.6.0"
+VERSION_UNSHACKLE = "2.6.1"
 
 require 'lua-utf8'
 
 lfs = require("lfs")
 bitser = require("bitser")
-input = dofile("mods/evaisa.unshackle/lib/input.lua")
+
 
 dofile("data/scripts/lib/coroutines.lua")
 
@@ -126,6 +126,8 @@ for i, callback in ipairs(noita_callbacks)do
             print("Unshackle Version: "..VERSION_UNSHACKLE.." Loaded!")
         elseif(callback == "OnWorldPreUpdate")then
             wake_up_waiting_threads(1)
+		elseif(callback == "OnPlayerSpawned")then
+			input = dofile("mods/evaisa.unshackle/lib/input.lua")
 		elseif(callback == "OnMagicNumbersAndWorldSeedInitialized")then
 			if(steam)then
 				steam.init()
