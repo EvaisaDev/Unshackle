@@ -3,7 +3,7 @@ package.path = package.path .. ";./mods/evaisa.unshackle/lib/?/init.lua"
 package.cpath = package.cpath .. ";./mods/evaisa.unshackle/bin/?.dll"
 package.cpath = package.cpath .. ";./mods/evaisa.unshackle/bin/?.exe"
 
-VERSION_UNSHACKLE = "2.6.1"
+VERSION_UNSHACKLE = "2.6.4"
 
 require 'lua-utf8'
 
